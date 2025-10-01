@@ -12,13 +12,10 @@ mcp-demo/
 ├── 🔒 .env                  # Environment variables (create this)
 ├── 📋 config.example.json   # Example configuration
 ├── 🚫 .gitignore            # Git ignore rules
-│
-├── 📂 src/
-│   ├── 🎯 index.ts          # Main application entry point
-│   ├── 🔧 client.ts         # MCP client implementation
-│   └── ⚙️ config.ts         # Configuration management
-│
-└── 📂 dist/                 # Compiled JavaScript (after build)
+└── 📂 src/
+    ├── 🎯 index.ts          # Main application entry point
+    ├── 🔧 client.ts         # MCP client implementation
+    └── ⚙️ config.ts         # Configuration management
 ```
 
 ### Architecture Overview
