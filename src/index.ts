@@ -49,8 +49,27 @@ class InteractiveMCPDemo {
   async initialize() {
     console.log("🚀 Initializing MCP Demo...");
     try {
-      this.availableTools = await this.client.listTools("aws-knowledge-mcp-server");
-      console.log("📚 Available MCP tools loaded successfully");
+      // Load tools from all enabled servers
+      this.availableTools = [];
+      const enabledServers = this.config.mcpServers.filter(server => server.enabled !== false);
+      
+      for (const server of enabledServers) {
+        try {
+          const tools = await this.client.listTools(server.name);
+          // Add server info to each tool for later reference
+          const toolsWithServer = tools.map(tool => ({
+            ...tool,
+            serverName: server.name,
+            serverDescription: server.description
+          }));
+          this.availableTools.push(...toolsWithServer);
+          console.log(`📋 Loaded ${tools.length} tools from ${server.name}`);
+        } catch (error) {
+          console.warn(`⚠️  Failed to load tools from ${server.name}:`, error);
+        }
+      }
+      
+      console.log(`📚 Total ${this.availableTools.length} MCP tools loaded successfully`);
       console.log("💡 Type 'help' to see available commands or 'quit' to exit\n");
     } catch (error) {
       console.error("❌ Failed to initialize MCP client:", error);
@@ -119,13 +138,19 @@ Do not include markdown formatting or additional text.
       throw new Error("Invalid tool choice");
     }
 
-    console.log(`🔧 Using MCP tool: ${choice.tool}`);
+    // Find which server has this tool
+    const toolInfo = this.availableTools.find(tool => tool.name === choice.tool);
+    if (!toolInfo || !toolInfo.serverName) {
+      throw new Error(`Tool ${choice.tool} not found in any configured server`);
+    }
+
+    console.log(`🔧 Using MCP tool: ${choice.tool} (from ${toolInfo.serverName})`);
     console.log(`📝 Reasoning: ${choice.reasoning}\n`);
 
     let streamedText = "";
 
     await this.client.callToolStream(
-      "aws-knowledge-mcp-server",
+      toolInfo.serverName,
       choice.tool,
       choice.args,
       (chunk) => {
@@ -173,16 +198,30 @@ Examples:
 
   private showTools(): void {
     console.log("📚 Available MCP Tools:");
-    this.availableTools.forEach((tool, index) => {
-      console.log(`${index + 1}. ${tool.name}`);
-      if (tool.description) {
-        console.log(`   Description: ${tool.description}`);
+    
+    // Group tools by server
+    const toolsByServer: Record<string, any[]> = {};
+    this.availableTools.forEach(tool => {
+      const serverName = tool.serverName || 'Unknown Server';
+      if (!toolsByServer[serverName]) {
+        toolsByServer[serverName] = [];
       }
-      if (tool.inputSchema?.properties) {
-        console.log(`   Parameters: ${Object.keys(tool.inputSchema.properties).join(', ')}`);
-      }
-      console.log();
+      toolsByServer[serverName].push(tool);
     });
+
+    Object.entries(toolsByServer).forEach(([serverName, tools]) => {
+      console.log(`\n🔧 ${serverName}:`);
+      tools.forEach((tool, index) => {
+        console.log(`  ${index + 1}. ${tool.name}`);
+        if (tool.description) {
+          console.log(`     Description: ${tool.description}`);
+        }
+        if (tool.inputSchema?.properties) {
+          console.log(`     Parameters: ${Object.keys(tool.inputSchema.properties).join(', ')}`);
+        }
+      });
+    });
+    console.log();
   }
 
   private question(prompt: string): Promise<string> {

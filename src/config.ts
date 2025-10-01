@@ -43,12 +43,12 @@ export function loadConfig(): AppConfig {
   try {
     const fs = require('fs');
     const path = require('path');
-    
+
     const configPath = path.join(process.cwd(), 'config.json');
     if (fs.existsSync(configPath)) {
       const configFile = fs.readFileSync(configPath, 'utf8');
       const userConfig = JSON.parse(configFile);
-      
+
       return {
         ...defaultConfig,
         ...userConfig,
@@ -60,6 +60,6 @@ export function loadConfig(): AppConfig {
   } catch (error: any) {
     console.warn('⚠️  Could not load config.json, using defaults:', error.message || error);
   }
-  
+
   return defaultConfig;
 }
