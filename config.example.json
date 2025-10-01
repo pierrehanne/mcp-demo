@@ -1,0 +1,19 @@
+{
+  "mcpServers": [
+    {
+      "name": "aws-knowledge-mcp-server",
+      "url": "https://knowledge-mcp.global.api.aws",
+      "description": "AWS Knowledge and Documentation Server",
+      "enabled": true
+    }
+  ],
+  "gemini": {
+    "model": "gemini-2.0-flash-exp",
+    "timeout": 30000
+  },
+  "client": {
+    "timeout": 30000,
+    "maxRetries": 3,
+    "streamingChunkSize": 50
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "mcp-demo",
+  "version": "1.0.0",
+  "description": "An interactive Node.js project leveraging Google GenAI and Model Context Protocol SDK.",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node --watch src/index.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "lint": "echo \"Add ESLint configuration for linting\"",
+    "test": "echo \"Add test framework and tests\" && exit 0"
+  },
+  "dependencies": {
+    "@google/genai": "^1.21.0",
+    "@modelcontextprotocol/sdk": "^1.18.2",
+    "ts-node": "^10.9.2",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.9.3",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.13",
+    "@types/node": "^24.6.1"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "google-genai",
+    "ai",
+    "interactive",
+    "cli"
+  ],
+  "license": "MIT"
+}
